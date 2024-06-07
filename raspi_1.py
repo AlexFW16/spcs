@@ -34,7 +34,7 @@ def on_connect(client, userdata, flags, rc):
 	logger.info('Connected with result code %s',str(rc))
 	# Subscribing in on_connect() means that if we lose the connection and
 	# reconnect then subscriptions will be renewed.
-	client.subscribe(topic_data, qos=0) #TODO do differently?
+	client.subscribe(topic_data, qos=0) 
 	client.subscribe(topic_control, qos=0)
 
 
@@ -58,22 +58,12 @@ def publish_humidity(client):
     humidity = get_humidity()
     msg = "{\"humidity\": \"" + str(humidity) + "\"}"
     result = client.publish(topic_data, msg)
-
-    status = 0#result[0, 1] # TODO does not work properly yet
-    if status == 0:
-        print(f"Sent `{msg}` to topic `{topic_data}`")
-    else:
-        print(f"Failed sending `{msg}` to topic `{topic_data}`")
+    print(f"Sent `{msg}` to topic `{topic_data}`")
 
 def publish_buttonPress(client):
     msg = "{\"pressed\": \"1\"}"
     result = client.publish(topic_control, msg)
-
-    status = 0 #result[0, 1] # TODO does not work properly yet
-    if status == 0:
-        print(f"Sent `{msg}` to topic `{topic_control}`")
-    else:
-        print(f"Failed sending `{msg}` to topic `{topic_control}`")
+    print(f"Sent `{msg}` to topic `{topic_control}`")
 
 
 # TODO implement

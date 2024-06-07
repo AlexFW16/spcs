@@ -8,7 +8,7 @@ import threading
 import json
 import RPi.GPIO as GPIO
 
-# static stuff
+# topics
 topic_control = "topic_control_jku_20"
 topic_data = "topic_data_jku_20"
 
@@ -16,7 +16,6 @@ topic_data = "topic_data_jku_20"
 logger = logging.getLogger(__name__)
 logging.basicConfig(level="INFO")
 
-# TODO our stuff
 brokers_out = {"broker1": "tcp://broker.hivemq.com:1883"}
 data_out = json.dumps(brokers_out)
 data_in = data_out
@@ -24,6 +23,7 @@ brokers_in = json.loads(data_in)
 
 ttg = [10, 7, 7, 5]  # red
 gd = [15, 10, 20, 20]  # green
+
 # LED setup
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(25, GPIO.OUT)
@@ -39,19 +39,17 @@ def on_connect(client, userdata, flags, rc):
     logger.info('Connected with result code %s', str(rc))
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
-    client.subscribe(topic_data, qos=0)  # TODO do differently?
-    client.subscribe(topic_control, qos=0)  # TODO do differently?
+    client.subscribe(topic_data, qos=0)
+    client.subscribe(topic_control, qos=0)
 
 
 # mqtt message received callback function
 def on_message(client, userdata, msg):
     topic = msg.topic
-    print(topic)
     if topic == topic_control:
         m_decode = str(msg.payload.decode("utf-8", "ignore"))
         state_dict = json.loads(m_decode)
         if "state" in state_dict:
-            print("the current state is" + state_dict['state'])
             state = state_dict['state']
             threading.Thread(target=handle_leds, args=(state,)).start()
 
@@ -64,19 +62,14 @@ def publish_light(client):
     light = get_light()
     msg = "{\"light\": \"" + str(light) + "\"}"
     result = client.publish(topic_data, msg)
-
-    status = 0  # result[0, 1] # TODO does not work properly yet
-    if status == 0:
-        print(f"Sent `{msg}` to topic `{topic_data}`")
-    else:
-        print(f"Failed sending `{msg}` to topic `{topic_data}`")
+    print(f"Sent `{msg}` to topic `{topic_data}`")
 
 
 def publish_data(client):
     try:
         while True:
             publish_light(client)
-            sleep(10)
+            sleep(5)
     except (KeyboardInterrupt, SystemExit):
         logger.info("disconnecting...")
         client.disconnect()
@@ -110,7 +103,6 @@ def control_leds(local_ttg, local_gd):
     GPIO.output(24, False)
 
 
-# to be implemented
 def get_light():
     curLvl = 1 - GPIO.input(23)
     logger.info(f"Light level measured: {curLvl}")
