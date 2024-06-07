@@ -55,7 +55,7 @@ def on_message(client, userdata, msg):
 	
 # our method to publish messages
 def publish_humidity(client):
-    humidity = get_humidity();
+    humidity = get_humidity()
     msg = "{\"humidity\": \"" + str(humidity) + "\"}"
     result = client.publish(topic_data, msg)
 
