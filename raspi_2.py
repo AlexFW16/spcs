@@ -6,10 +6,12 @@ import paho.mqtt.client as mqtt
 import logging
 import threading
 import json
+import RPi.GPIO as GPIO
+
 
 # static stuff
-topic_control = "topic_control"
-topic_data = "topic_data"
+topic_control = "topic_control_jku_20"
+topic_data = "topic_data_jku_20"
 
 # setup logging
 logger = logging.getLogger(__name__)
@@ -21,6 +23,15 @@ brokers_out = {"broker1": "tcp://broker.hivemq.com:1883"}
 data_out = json.dumps(brokers_out)
 data_in = data_out
 brokers_in = json.loads(data_in)
+
+# LED setup
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(25, GPIO.OUT) 
+GPIO.setup(24, GPIO.OUT)
+GPIO.setup(23, GPIO.IN)
+isRed = True
+GPIO.output(25, isRed)
+GPIO.output(24, not isRed)
 
 
 # mqtt connect callback function
@@ -36,7 +47,7 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
 	topic = msg.topic
 	print(topic)
-	if topic == "topic_control":
+	if topic == topic_control:
 	    m_decode = str(msg.payload.decode("utf-8", "ignore"))
 	    state_dict = json.loads(m_decode)
 	    if "state" in state_dict:
@@ -77,11 +88,33 @@ def listen(client):
 # gets as input one of the four states (0, 1, 2,  3)
 # and should do the raspi stuff
 def handle_leds(state):
-    pass
+    if isRed: 
+        isRed = False
+        if state == 0: 
+           control_leds(10, 15)
+        elif state == 1:
+            control_leds(7, 15)
+        elif state == 2: 
+            control_leds(7, 20)
+        elif state == 3: 
+            control_leds(5, 20)
+        else:
+            logger.info("Invalid control signal")
+        isRed = True
+          
+def control_leds(ttg, gd): 
+    sleep(ttg)
+    GPIO.output(25, False)
+    GPIO.output(24, True)
+    sleep(gd)
+    GPIO.output(25, True)
+    GPIO.output(24, False)
 
 # to be implemented
 def get_light():
-    return 99
+    curLvl = 1-GPIO.input(23)
+    logger.info(f"Light level measured: {curLvl}")
+    return curLvl
 
 #=======================
 
@@ -105,14 +138,13 @@ try:
     i = 0
     while i < 10:
         input()
-        publish_data(client)
+        publish(client)
         time.sleep(1)
         i += 1
 
 except (KeyboardInterrupt, SystemExit):
     logger.info("disconnecting...")
     client.disconnect()
+    GPIO.cleanup()
     time.sleep(1)
     logger.info("succesfully disconnected.")
-
-
