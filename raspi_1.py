@@ -46,7 +46,7 @@ def on_message(client, userdata, msg):
 	# Needs to display the time
 	print("Data received: " + m_decode)
 
-	if topic == topic_control
+	if topic == topic_control:
 	    m_decode = str(msg.payload.decode("utf-8", "ignore"))
 	    state_dict = json.loads(m_decode)
 	    if "state" in state_dict:
