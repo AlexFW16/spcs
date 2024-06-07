@@ -7,7 +7,6 @@ import logging
 import threading
 import json
 from sense_hat import SenseHat
-from pedestrian_light_counter import Pedestrian_Light_Counter
 from sensehat_controller import Sensehat_Controller
 
 # static stuff
@@ -51,7 +50,7 @@ def on_message(client, userdata, msg):
 	    state_dict = json.loads(m_decode)
 	    if "state" in state_dict:
 	        print("the current state is" + state_dict['state'])
-            plc.start_countdown(state_dict['state'])
+	        plc.start_countdown(state_dict['state'])
             plc.start_countdown(state)
 	
 # our method to publish messages
