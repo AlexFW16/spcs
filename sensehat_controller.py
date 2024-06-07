@@ -57,14 +57,6 @@ class Sensehat_Controller:
 
     # Function to perform the countdown
     def red_countdown(self, red_start_count, green_start_count):
-        sleep(2)  # time to breathe on the humidity sensor to simulate rain
-        humidity = round(self.sense.get_humidity(), 2)
-        print(humidity)
-        #    red_start_count = 5 if humidity < 35 else 3
-        #    green_start_count = 3 if humidity < 35 else 5
-    #    red_start_count = 20 if humidity < 35 else 12
-    #    green_start_count = 10 if humidity < 35 else 15
-
         for i in range(red_start_count, -1, -1):
             self.display_number(i, self.red)
             sleep(0.9)  # display of the digits
@@ -77,34 +69,8 @@ class Sensehat_Controller:
             self.clear_display()
             sleep(0.1)  # Briefly clear the display before showing the next number
 
-    def listen_joystick(self, state):
-        self.sense.clear()
-        while True:
-            for event in self.sense.stick.get_events():
-                # Check if the joystick was pressed
-                if event.action == "pressed":
-                    # Check which direction and display the corresponding letter
-                    if event.direction == "middle":
-                        self.start_countdown(state)
-                    elif event.direction == "up":
-                        self.sense.show_letter("U", text_colour=self.black)
-                    elif event.direction == "down":
-                        self.sense.show_letter("D", text_colour=self.black)
-                    elif event.direction == "left":
-                        self.sense.show_letter("L", text_colour=self.black)
-                    elif event.direction == "right":
-                        self.sense.show_letter("R", text_colour=self.black)
-
-                    # Wait a while and' then clear the screen for non-middle presses
-                    if event.direction != "middle":
-                        sleep(0.5)
-                        self.sense.clear()
-
     def start_countdown(self, state):
         self.red_countdown(self.ttg[state], self.gd[state])
 
-
-plc = Pedestrian_Light_Counter()
-plc.listen_joystick(0)
 
 
