@@ -1,13 +1,12 @@
 #!/usr/bin/python
 
 from __future__ import division
-import time
+from time import sleep
 import paho.mqtt.client as mqtt
 import logging
 import threading
 import json
 import RPi.GPIO as GPIO
-
 
 # static stuff
 topic_control = "topic_control_jku_20"
@@ -17,106 +16,108 @@ topic_data = "topic_data_jku_20"
 logger = logging.getLogger(__name__)
 logging.basicConfig(level="INFO")
 
-
-#TODO our stuff
-brokers_out = {"broker1": "tcp://broker.hivemq.com:1883"}	
+# TODO our stuff
+brokers_out = {"broker1": "tcp://broker.hivemq.com:1883"}
 data_out = json.dumps(brokers_out)
 data_in = data_out
 brokers_in = json.loads(data_in)
 
+ttg = [10, 7, 7, 5]  # red
+gd = [15, 10, 20, 20]  # green
 # LED setup
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(25, GPIO.OUT) 
+GPIO.setup(25, GPIO.OUT)
 GPIO.setup(24, GPIO.OUT)
 GPIO.setup(23, GPIO.IN)
-isRed = True
-GPIO.output(25, isRed)
-GPIO.output(24, not isRed)
+
+GPIO.output(25, True)
+GPIO.output(24, False)
 
 
 # mqtt connect callback function
 def on_connect(client, userdata, flags, rc):
-	logger.info('Connected with result code %s',str(rc))
-	# Subscribing in on_connect() means that if we lose the connection and
-	# reconnect then subscriptions will be renewed.
-	client.subscribe(topic_data, qos=0) #TODO do differently?
-	client.subscribe(topic_control, qos=0) #TODO do differently?
+    logger.info('Connected with result code %s', str(rc))
+    # Subscribing in on_connect() means that if we lose the connection and
+    # reconnect then subscriptions will be renewed.
+    client.subscribe(topic_data, qos=0)  # TODO do differently?
+    client.subscribe(topic_control, qos=0)  # TODO do differently?
 
 
 # mqtt message received callback function
 def on_message(client, userdata, msg):
-	topic = msg.topic
-	print(topic)
-	if topic == topic_control:
-	    m_decode = str(msg.payload.decode("utf-8", "ignore"))
-	    state_dict = json.loads(m_decode)
-	    if "state" in state_dict:
-	        print("the current state is" + state_dict['state'])
-	        handle_leds(m_decode)
-	#DEBUG
-	#print("Data received: " + m_decode)
-	
+    topic = msg.topic
+    print(topic)
+    if topic == topic_control:
+        m_decode = str(msg.payload.decode("utf-8", "ignore"))
+        state_dict = json.loads(m_decode)
+        if "state" in state_dict:
+            print("the current state is" + state_dict['state'])
+            state = state_dict['state']
+            threading.Thread(target=handle_leds, args=(state,)).start()
+
+
+# DEBUG
+# print("Data received: " + m_decode)
+
 
 def publish_light(client):
-    light = get_light();
+    light = get_light()
     msg = "{\"light\": \"" + str(light) + "\"}"
     result = client.publish(topic_data, msg)
 
-    status = 0#result[0, 1] # TODO does not work properly yet
+    status = 0  # result[0, 1] # TODO does not work properly yet
     if status == 0:
         print(f"Sent `{msg}` to topic `{topic_data}`")
     else:
         print(f"Failed sending `{msg}` to topic `{topic_data}`")
 
+
 def publish_data(client):
     try:
         while True:
             publish_light(client)
-            time.sleep(10)
+            sleep(10)
     except (KeyboardInterrupt, SystemExit):
         logger.info("disconnecting...")
         client.disconnect()
-        time.sleep(1)
+        sleep(1)
         logger.info("succesfully disconnected.")
 
+
 def listen(client):
-	client.loop_forever()
+    client.loop_forever()
 
 
-
-#TODO
+# TODO
 # gets as input one of the four states (0, 1, 2,  3)
 # and should do the raspi stuff
 def handle_leds(state):
-    if isRed: 
-        isRed = False
-        if state == 0: 
-           control_leds(10, 15)
-        elif state == 1:
-            control_leds(7, 15)
-        elif state == 2: 
-            control_leds(7, 20)
-        elif state == 3: 
-            control_leds(5, 20)
-        else:
-            logger.info("Invalid control signal")
-        isRed = True
-          
-def control_leds(ttg, gd): 
-    sleep(ttg)
+    tg = [10, 7, 7, 5]
+    gd = [15, 10, 20, 20]
+    numeric = int(state)
+    if numeric < 4:
+        control_leds(ttg[numeric], gd[numeric])
+    else:
+        logger.info(f"Invalid control signal: {state}")
+
+
+def control_leds(local_ttg, local_gd):
+    sleep(local_ttg)
     GPIO.output(25, False)
     GPIO.output(24, True)
-    sleep(gd)
+    sleep(local_gd)
     GPIO.output(25, True)
     GPIO.output(24, False)
 
+
 # to be implemented
 def get_light():
-    curLvl = 1-GPIO.input(23)
+    curLvl = 1 - GPIO.input(23)
     logger.info(f"Light level measured: {curLvl}")
     return curLvl
 
-#=======================
+
+# =======================
 
 # setup mqtt
 client = mqtt.Client()
@@ -133,18 +134,19 @@ listener.start()
 publisher.start()
 
 # debug stuff
-try: 
+try:
 
     i = 0
     while i < 10:
         input()
         publish(client)
-        time.sleep(1)
+        sleep(1)
         i += 1
 
 except (KeyboardInterrupt, SystemExit):
     logger.info("disconnecting...")
     client.disconnect()
     GPIO.cleanup()
-    time.sleep(1)
+    sleep(1)
     logger.info("succesfully disconnected.")
+
