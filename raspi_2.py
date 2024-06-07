@@ -47,7 +47,7 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
 	topic = msg.topic
 	print(topic)
-	if topic == "topic_control":
+	if topic == topic_control:
 	    m_decode = str(msg.payload.decode("utf-8", "ignore"))
 	    state_dict = json.loads(m_decode)
 	    if "state" in state_dict:
