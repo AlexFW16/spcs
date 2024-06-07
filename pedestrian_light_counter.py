@@ -58,8 +58,8 @@ class Pedestrian_Light_Counter:
     # Function to perform the countdown
     def red_countdown(self, red_start_count, green_start_count):
         sleep(2)  # time to breathe on the humidity sensor to simulate rain
-        humidity = round(self.sense.get_humidity(), 2)
-        print(humidity)
+#        humidity = round(self.sense.get_humidity(), 2)
+#        print(humidity)
         #    red_start_count = 5 if humidity < 35 else 3
         #    green_start_count = 3 if humidity < 35 else 5
     #    red_start_count = 20 if humidity < 35 else 12
