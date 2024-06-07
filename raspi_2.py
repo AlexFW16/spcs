@@ -10,8 +10,8 @@ import RPi.GPIO as GPIO
 
 
 # static stuff
-topic_control = "topic_control"
-topic_data = "topic_data"
+topic_control = "topic_control_jku_20"
+topic_data = "topic_data_jku_20"
 
 # setup logging
 logger = logging.getLogger(__name__)
