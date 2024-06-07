@@ -13,7 +13,7 @@ from sensehat_controller import Sensehat_Controller
 topic_data = "topic_data"
 topic_control = "topic_control"
 
-plc = Sensehat_Controller()
+sensehat_controller = Sensehat_Controller()
 
 
 # setup logging
@@ -50,7 +50,7 @@ def on_message(client, userdata, msg):
 	    state_dict = json.loads(m_decode)
 	    if "state" in state_dict:
 	        print("the current state is" + state_dict['state'])
-	        plc.start_countdown(state_dict['state'])
+	        sensehat_controller.start_countdown(state_dict['state'])
 	
 # our method to publish messages
 def publish_humidity(client):
@@ -77,7 +77,7 @@ def publish_buttonPress(client):
 
 # TODO implement
 def get_humidity():
-    return round(sense.get_humidity(), 2)
+    return round(sensehat_controller.sense.get_humidity(), 2)
 
 #When button is pressed, call publishButtonPress()
 
