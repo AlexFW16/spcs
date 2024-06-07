@@ -57,13 +57,13 @@ class Sensehat_Controller:
 
     # Function to perform the countdown
     def red_countdown(self, red_start_count, green_start_count):
-        for i in range(red_start_count, -1, -1):
+        for i in range(red_start_count, 0, -1):
             self.display_number(i, self.red)
             sleep(0.9)  # display of the digits
             self.clear_display()
             sleep(0.1)  # Briefly clear the display before showing the next number
 
-        for i in range(green_start_count, -1, -1):
+        for i in range(green_start_count, 0, -1):
             self.display_number(i, self.green)
             sleep(0.9)  # display of the digits
             self.clear_display()

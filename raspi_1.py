@@ -41,17 +41,17 @@ def on_connect(client, userdata, flags, rc):
 # mqtt message received callback function
 # display stuff
 def on_message(client, userdata, msg):
-	topic = msg.topic
-	m_decode = str(msg.payload.decode("utf-8", "ignore"))
-	# Needs to display the time
-	print("Data received: " + m_decode)
+    topic = msg.topic
+    m_decode = str(msg.payload.decode("utf-8", "ignore"))
+    # Needs to display the time
+    print("Data received: " + m_decode)
 
-	if topic == topic_control:
-	    m_decode = str(msg.payload.decode("utf-8", "ignore"))
-	    state_dict = json.loads(m_decode)
-	    if "state" in state_dict:
-	        state = state_dict['state']
-            threading.Thread(target=print_to_display, args=(state,)).start() # starts a thread for the display
+    if topic == topic_control:
+        m_decode = str(msg.payload.decode("utf-8", "ignore"))
+        state_dict = json.loads(m_decode)
+        if "state" in state_dict:
+            state = state_dict['state']
+            threading.Thread(target=print_to_display, args=(state,)).start()  # starts a thread for the display
 	
 # our method to publish messages
 def publish_humidity(client):
@@ -98,8 +98,8 @@ def publish_data(client):
         logger.info("succesfully disconnected.")
 
 
-def print_to_display(state_dict):
-	sensehat_controller.start_countdown(state_dict['state'])
+def print_to_display(state):
+	sensehat_controller.start_countdown(state)
 
 #=======================
 
