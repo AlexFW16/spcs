@@ -70,6 +70,7 @@ class Sensehat_Controller:
             sleep(0.1)  # Briefly clear the display before showing the next number
 
     def start_countdown(self, state):
+        state = int(state)
         self.red_countdown(self.ttg[state], self.gd[state])
 
 
