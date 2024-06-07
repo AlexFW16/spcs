@@ -128,4 +128,5 @@ button_listener = threading.Thread(target=listen_button)
 
 listener.start()
 publisher.start()
+button_listener.start()
 
