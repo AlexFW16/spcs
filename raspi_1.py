@@ -10,8 +10,8 @@ from sense_hat import SenseHat
 from sensehat_controller import Sensehat_Controller
 
 # static stuff
-topic_data = "topic_data"
-topic_control = "topic_control"
+topic_data = "topic_data_jku_20"
+topic_control = "topic_control_jku_20"
 
 sensehat_controller = Sensehat_Controller()
 
@@ -101,13 +101,12 @@ def publish_data(client):
 
 #=======================
 
-def listen_button(self, state):
+def listen_button(self, client):
         self.sense.clear()
         while True:
             for event in self.sense.stick.get_events():
                 if event.action == "pressed" and event.direction == "middle":
-                    #TODO
-                    return 0
+                    publishButtonPress(client)
 
 
 
@@ -124,7 +123,7 @@ client.connect("broker.hivemq.com", 1883, 60)
 listener = threading.Thread(target=listen, args=(client,))
 publisher = threading.Thread(target=publish_data, args=(client,))
 
-button_listener = threading.Thread(target=listen_button)
+button_listener = threading.Thread(target=listen_button, args=(client,))
 
 listener.start()
 publisher.start()
