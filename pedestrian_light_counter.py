@@ -3,6 +3,7 @@ from time import sleep
 
 
 class Pedestrian_Light_Counter:
+
     sense = SenseHat()
     # states
     ttg = [10, 7, 7, 5]  # red
@@ -55,14 +56,14 @@ class Pedestrian_Light_Counter:
 
 
     # Function to perform the countdown
-    def red_countdown(self):
+    def red_countdown(self, red_start_count, green_start_count):
         sleep(2)  # time to breathe on the humidity sensor to simulate rain
         humidity = round(self.sense.get_humidity(), 2)
         print(humidity)
         #    red_start_count = 5 if humidity < 35 else 3
         #    green_start_count = 3 if humidity < 35 else 5
-        red_start_count = 20 if humidity < 35 else 12
-        green_start_count = 10 if humidity < 35 else 15
+    #    red_start_count = 20 if humidity < 35 else 12
+    #    green_start_count = 10 if humidity < 35 else 15
 
         for i in range(red_start_count, -1, -1):
             self.display_number(i, self.red)
@@ -76,7 +77,7 @@ class Pedestrian_Light_Counter:
             self.clear_display()
             sleep(0.1)  # Briefly clear the display before showing the next number
 
-    def test(self):
+    def listen_joystick(self, state):
         self.sense.clear()
         while True:
             for event in self.sense.stick.get_events():
@@ -84,7 +85,7 @@ class Pedestrian_Light_Counter:
                 if event.action == "pressed":
                     # Check which direction and display the corresponding letter
                     if event.direction == "middle":
-                        self.red_countdown()
+                        self.start_countdown(state)
                     elif event.direction == "up":
                         self.sense.show_letter("U", text_colour=self.black)
                     elif event.direction == "down":
@@ -99,10 +100,11 @@ class Pedestrian_Light_Counter:
                         sleep(0.5)
                         self.sense.clear()
 
+    def start_countdown(self, state):
+        self.red_countdown(self.ttg[state], self.gd[state])
 
 
-
-# test script
 plc = Pedestrian_Light_Counter()
-plc.test()
+plc.listen_joystick(0)
+
 
