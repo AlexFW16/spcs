@@ -81,7 +81,7 @@ def listen(client):
     client.loop_forever()
 
 
-# TODO
+# TODO tg/gd useless??? @LEON
 # gets as input one of the four states (0, 1, 2,  3)
 # and should do the raspi stuff
 def handle_leds(state):
@@ -124,21 +124,3 @@ publisher = threading.Thread(target=publish_data, args=(client,))
 
 listener.start()
 publisher.start()
-
-# debug stuff
-try:
-
-    i = 0
-    while i < 10:
-        input()
-        publish(client)
-        sleep(1)
-        i += 1
-
-except (KeyboardInterrupt, SystemExit):
-    logger.info("disconnecting...")
-    client.disconnect()
-    GPIO.cleanup()
-    sleep(1)
-    logger.info("succesfully disconnected.")
-
