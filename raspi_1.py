@@ -28,6 +28,7 @@ data_in = data_out
 brokers_in = json.loads(data_in)
 
 
+
 # mqtt connect callback function
 def on_connect(client, userdata, flags, rc):
 	logger.info('Connected with result code %s',str(rc))
@@ -100,6 +101,17 @@ def publish_data(client):
 
 #=======================
 
+def listen_button(self, state):
+        self.sense.clear()
+        while True:
+            for event in self.sense.stick.get_events():
+                if event.action == "pressed" and event.direction == "middle":
+                    #TODO
+                    return 0
+
+
+
+
 # setup mqtt
 client = mqtt.Client()
 client.on_connect = on_connect
@@ -111,6 +123,8 @@ client.connect("broker.hivemq.com", 1883, 60)
 #Thread that waits for messages
 listener = threading.Thread(target=listen, args=(client,))
 publisher = threading.Thread(target=publish_data, args=(client,))
+
+button_listener = threading.Thread(target=listen_button)
 
 listener.start()
 publisher.start()
