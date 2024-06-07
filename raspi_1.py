@@ -102,9 +102,9 @@ def publish_data(client):
 #=======================
 
 def listen_button(self, client):
-        self.sense.clear()
+        sensehat_controller.sense.clear()
         while True:
-            for event in self.sense.stick.get_events():
+            for event in sensehat_controller.sense.stick.get_events():
                 if event.action == "pressed" and event.direction == "middle":
                     publishButtonPress(client)
 
