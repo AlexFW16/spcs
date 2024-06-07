@@ -51,7 +51,6 @@ def on_message(client, userdata, msg):
 	    if "state" in state_dict:
 	        print("the current state is" + state_dict['state'])
 	        plc.start_countdown(state_dict['state'])
-            plc.start_countdown(state)
 	
 # our method to publish messages
 def publish_humidity(client):
@@ -69,7 +68,7 @@ def publish_buttonPress(client):
     msg = "{\"pressed\": \"1\"}"
     result = client.publish(topic_control, msg)
 
-    status = 0#result[0, 1] # TODO does not work properly yet
+    status = 0 #result[0, 1] # TODO does not work properly yet
     if status == 0:
         print(f"Sent `{msg}` to topic `{topic_control}`")
     else:
