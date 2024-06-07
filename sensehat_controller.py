@@ -1,5 +1,6 @@
 from sense_hat import SenseHat
 from time import sleep
+import RTIMU
 
 
 class Sensehat_Controller:
