@@ -49,9 +49,9 @@ def on_message(client, userdata, msg):
 	print(topic)
 	if topic == "topic_control":
 	    m_decode = str(msg.payload.decode("utf-8", "ignore"))
-	    mode_dict = json.loads(m_decode)
-	    if "mode" in mode_dict:
-	        print("the current mode is" + mode_dict['mode'])
+	    state_dict = json.loads(m_decode)
+	    if "state" in state_dict:
+	        print("the current state is" + state_dict['state'])
 	        handle_leds(m_decode)
 	#DEBUG
 	#print("Data received: " + m_decode)
@@ -87,16 +87,16 @@ def listen(client):
 #TODO
 # gets as input one of the four states (0, 1, 2,  3)
 # and should do the raspi stuff
-def handle_leds(mode):
+def handle_leds(state):
     if isRed: 
         isRed = False
-        if mode == 0: 
+        if state == 0: 
            control_leds(10, 15)
-        elif mode == 1:
+        elif state == 1:
             control_leds(7, 15)
-        elif mode == 2: 
+        elif state == 2: 
             control_leds(7, 20)
-        elif mode == 3: 
+        elif state == 3: 
             control_leds(5, 20)
         else:
             logger.info("Invalid control signal")
