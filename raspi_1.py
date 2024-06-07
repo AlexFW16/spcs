@@ -6,13 +6,13 @@ import paho.mqtt.client as mqtt
 import logging
 import threading
 import json
-from pedestrian_light_counter import Pedestrian_Light_Counter
+from sensehat_controller import Sensehat_Controller
 
 # static stuff
 topic_data = "topic_data"
 topic_control = "topic_control"
 
-plc = Pedestrian_Light_Counter()
+plc = Sensehat_Controller()
 
 
 # setup logging
