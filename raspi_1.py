@@ -6,6 +6,8 @@ import paho.mqtt.client as mqtt
 import logging
 import threading
 import json
+from sense_hat import SenseHat
+from pedestrian_light_counter import Pedestrian_Light_Counter
 from sensehat_controller import Sensehat_Controller
 
 # static stuff
@@ -77,7 +79,7 @@ def publish_buttonPress(client):
 
 # TODO implement
 def get_humidity():
-    return 10
+    return round(sense.get_humidity(), 2)
 
 #When button is pressed, call publishButtonPress()
 
