@@ -12,6 +12,15 @@ import RPi.GPIO as GPIO
 topic_control = "topic_control_jku_20"
 topic_data = "topic_data_jku_20"
 
+# times
+ttg = [10, 7, 7, 5]
+gd = [15, 10, 20, 20]
+
+#pins
+green_pin = 24
+red_pin = 25 
+light_input_pint = 23
+ 
 # setup logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(level="INFO")
@@ -24,12 +33,12 @@ brokers_in = json.loads(data_in)
 
 # LED setup
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(25, GPIO.OUT)
-GPIO.setup(24, GPIO.OUT)
-GPIO.setup(23, GPIO.IN)
+GPIO.setup(red_pin, GPIO.OUT)
+GPIO.setup(green_pin, GPIO.OUT)
+GPIO.setup(light_input_pin, GPIO.IN)
 
-GPIO.output(25, True)
-GPIO.output(24, False)
+GPIO.output(red_pin, True)
+GPIO.output(green_pin, False)
 
 
 # mqtt connect callback function
@@ -50,11 +59,6 @@ def on_message(client, userdata, msg):
         if "state" in state_dict:
             state = state_dict['state']
             threading.Thread(target=handle_leds, args=(state,)).start()
-
-
-# DEBUG
-# print("Data received: " + m_decode)
-
 
 def publish_light(client):
     light = get_light()
@@ -79,33 +83,26 @@ def listen(client):
     client.loop_forever()
 
 
-# TODO tg/gd useless??? @LEON
 # gets as input one of the four states (0, 1, 2,  3)
-# and should do the raspi stuff
 def handle_leds(state):
-    ttg = [10, 7, 7, 5]
-    gd = [15, 10, 20, 20]
-    numeric = int(state)
+    global ttg, gd
+    state = int(state)
     if numeric < 4:
-        control_leds(ttg[numeric], gd[numeric])
+        sleep(ttg[state])
+        GPIO.output(red_pin, False)
+        GPIO.output(green_pin, True)
+
+        sleep(gd[state])
+        GPIO.output(red_pin, True)
+        GPIO.output(green_pin, False)
     else:
         logger.info(f"Invalid control signal: {state}")
 
 
-def control_leds(local_ttg, local_gd):
-    sleep(local_ttg)
-    GPIO.output(25, False)
-    GPIO.output(24, True)
-    sleep(local_gd)
-    GPIO.output(25, True)
-    GPIO.output(24, False)
-
-
 def get_light():
-    curLvl = 1 - GPIO.input(23)
+    curLvl = 1 - GPIO.input(light_input_pint) # consistent naming, we send back if it is dark -> invert
     logger.info(f"Light level measured: {curLvl}")
     return curLvl
-
 
 # =======================
 
