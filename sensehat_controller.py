@@ -6,8 +6,8 @@ class Sensehat_Controller:
 
     sense = SenseHat()
     # states
-    ttg = [10, 7, 7, 5]  # red
-    gd = [15, 10, 20, 20]  # green
+    ttg = [10, 7, 7, 5]  # time to green - red counter
+    gd = [15, 10, 20, 20]  # green duration - green counter
 
     # Define colours
     black = (0, 0, 0)  # Background colour (black)
