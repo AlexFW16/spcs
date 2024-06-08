@@ -67,7 +67,7 @@ def publish_data(client):
     try:
         while True:
             publish_light(client)
-            sleep(5)
+            sleep(10)
     except (KeyboardInterrupt, SystemExit):
         logger.info("disconnecting...")
         client.disconnect()
@@ -83,7 +83,7 @@ def listen(client):
 # gets as input one of the four states (0, 1, 2,  3)
 # and should do the raspi stuff
 def handle_leds(state):
-    tg = [10, 7, 7, 5]
+    ttg = [10, 7, 7, 5]
     gd = [15, 10, 20, 20]
     numeric = int(state)
     if numeric < 4:
