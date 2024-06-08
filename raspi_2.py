@@ -7,6 +7,7 @@ import logging
 import threading
 import json
 import RPi.GPIO as GPIO
+import atexit
 
 # topics
 topic_control = "topic_control_jku_20"
@@ -19,7 +20,7 @@ gd = [15, 10, 20, 20]
 #pins
 green_pin = 24
 red_pin = 25 
-light_input_pint = 23
+light_input_pin = 23
  
 # setup logging
 logger = logging.getLogger(__name__)
@@ -87,7 +88,7 @@ def listen(client):
 def handle_leds(state):
     global ttg, gd
     state = int(state)
-    if numeric < 4:
+    if state < 4:
         sleep(ttg[state])
         GPIO.output(red_pin, False)
         GPIO.output(green_pin, True)
@@ -100,11 +101,15 @@ def handle_leds(state):
 
 
 def get_light():
-    curLvl = 1 - GPIO.input(light_input_pint) # consistent naming, we send back if it is dark -> invert
+    curLvl = 1 - GPIO.input(light_input_pin) # consistent naming, we send back if it is dark -> invert
     logger.info(f"Light level measured: {curLvl}")
     return curLvl
 
+def exit_handler():
+	GPIO.cleanup()
+	
 # =======================
+atexit.register(exit_handler)
 
 # setup mqtt
 client = mqtt.Client()
