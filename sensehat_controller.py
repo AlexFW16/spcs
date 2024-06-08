@@ -56,7 +56,7 @@ class Sensehat_Controller:
     def start_countdown(self, state):
         state = int(state)
         countdown(self.ttg[state], self.colours['red'])
-        countdown(self.dg[state], self.colours['green']')
+        countdown(self.dg[state], self.colours['green'])
 
     # Function to perform the countdown
     def countdown(self, duration, colour):
