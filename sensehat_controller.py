@@ -10,7 +10,7 @@ class Sensehat_Controller:
     gd = [15, 10, 20, 20]  # green duration - green counter
 
     # Define colours
-    colours dict = {'black':(0, 0, 0), 'red' = (255, 0 , 0), 'green': (0, 255, 0)}
+    colours = {'black':(0, 0, 0), 'red': (255, 0 , 0), 'green': (0, 255, 0)}
 
     # Define digit patterns
     digits0_9 = [
@@ -34,7 +34,7 @@ class Sensehat_Controller:
         digit2 = int(str_number[1])
 
         # Create an empty display buffer
-        display = [self.black] * 64
+        display = [self.colours['black']] * 64
 
         # Set the pixels for the first digit (left-aligned)
         for pixel in self.digits0_9[digit1]:
@@ -52,12 +52,6 @@ class Sensehat_Controller:
         self.sense.clear()
 
 
-    # start the countdown
-    def start_countdown(self, state):
-        state = int(state)
-        countdown(self.ttg[state], self.colours['red'])
-        countdown(self.dg[state], self.colours['green']')
-
     # Function to perform the countdown
     def countdown(self, duration, colour):
         for i in range(duration, 0, -1):
@@ -65,6 +59,13 @@ class Sensehat_Controller:
             sleep(0.9)  # digits keep being displayed
             self.clear_display()
             sleep(0.1)  # Briefly clear the display before showing the next number
+
+
+    # start the countdown
+    def start_countdown(self, state):
+        state = int(state)
+        self.countdown(self.ttg[state], self.colours['red'])
+        self.countdown(self.gd[state], self.colours['green'])
 
 
 
