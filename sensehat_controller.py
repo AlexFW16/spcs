@@ -10,7 +10,7 @@ class Sensehat_Controller:
     gd = [15, 10, 20, 20]  # green duration - green counter
 
     # Define colours
-    colours = {'black':(0, 0, 0), 'red' = (255, 0 , 0), 'green': (0, 255, 0)}
+    colours = {'black':(0, 0, 0), 'red': (255, 0 , 0), 'green': (0, 255, 0)}
 
     # Define digit patterns
     digits0_9 = [
