@@ -21,8 +21,6 @@ data_out = json.dumps(brokers_out)
 data_in = data_out
 brokers_in = json.loads(data_in)
 
-ttg = [10, 7, 7, 5]  # red
-gd = [15, 10, 20, 20]  # green
 
 # LED setup
 GPIO.setmode(GPIO.BCM)
