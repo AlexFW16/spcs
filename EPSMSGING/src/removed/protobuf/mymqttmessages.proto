@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package mymqttmessages;
+
+option java_package = "at.jku.pervasive.eps.mymqttmessages";
+option java_outer_classname = "ProtobufMessages";
+
+
+enum Led {
+    RED = 0;
+    GREEN = 1;
+    BLUE = 2;
+}
+
+enum LedAction {
+    OFF = 0;
+    ON = 1;
+    TOGGLE = 2;
+}
+
+message PBMessage {
+	uint32 source = 1;
+	uint32 target = 2;
+	
+	oneof msgtype {
+		PBGenericNumber number = 101;
+		PBGenericText text = 102; 		
+		PBLedControl ledControl = 203; 		
+	}
+}
+
+message PBGenericNumber {
+	sint64 number = 1;
+}
+
+message PBGenericText {
+	string text = 1;
+}
+
+message PBLedControl {
+   Led led=1;
+   LedAction action =2;
+   uint32 toggleRateHz = 3;  
+}
